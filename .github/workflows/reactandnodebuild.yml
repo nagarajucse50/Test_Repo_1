@@ -11,6 +11,11 @@ jobs:
   build-sonar:
     runs-on: ubuntu-latest
 
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      ARTIFACTORY_URL: ${{ secrets.ARTIFACTORY_URL }}
+      ARTIFACTORY_REPO: ${{ secrets.ARTIFACTORY_DOCKER_REPO }}
+
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
@@ -30,16 +35,6 @@ jobs:
       working-directory: frontend
       run: npm run build
 
-    - name: Check Frontend Build Artifacts
-      working-directory: frontend
-      run: |
-        echo "Listing frontend directory:"
-        ls -ltr
-        echo "Listing dist folder (if exists):"
-        ls -ltr dist || echo "dist folder not found"
-        echo "Listing build folder (if exists):"
-        ls -ltr build || echo "build folder not found"
-
     # ---------------- BACKEND ----------------
     - name: Install Backend Dependencies
       working-directory: backend
@@ -54,24 +49,41 @@ jobs:
           echo "No backend build step found, skipping"
         fi
 
-    - name: Check Backend Build Artifacts
-      working-directory: backend
-      run: |
-        echo "Listing backend directory:"
-        ls -ltr
-        echo "Listing dist folder (if exists):"
-        ls -ltr dist || echo "dist folder not found"
-        echo "Listing build folder (if exists):"
-        ls -ltr build || echo "build folder not found"
-
     # ---------------- SONARQUBE ----------------
     - name: SonarQube Scan
       uses: SonarSource/sonarqube-scan-action@v2
-      with:
-        args: >
-          -Dsonar.projectKey=my-org_Test_Repo_1
-          -Dsonar.organization=my-org
-          -Dsonar.sources=.
-      env:  
+      env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+    # ---------------- DOCKER SETUP ----------------
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    # ---------------- ARTIFACTORY LOGIN ----------------
+    - name: Login to Artifactory Docker Registry
+      run: |
+        echo "${{ secrets.ARTIFACTORY_PASSWORD }}" | docker login \
+          ${ARTIFACTORY_URL} \
+          -u "${{ secrets.ARTIFACTORY_USERNAME }}" \
+          --password-stdin
+
+    # ---------------- DOCKER BUILD & PUSH - FRONTEND ----------------
+    - name: Build & Push Frontend Docker Image
+      run: |
+        docker build \
+          -t ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO}/projectabc-frontend:${BUILD_NUMBER} \
+          ./frontend
+
+        docker push \
+          ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO}/projectabc-frontend:${BUILD_NUMBER}
+
+    # ---------------- DOCKER BUILD & PUSH - BACKEND ----------------
+    - name: Build & Push Backend Docker Image
+      run: |
+        docker build \
+          -t ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO}/projectabc-backend:${BUILD_NUMBER} \
+          ./backend
+
+        docker push \
+          ${ARTIFACTORY_URL}/${ARTIFACTORY_REPO}/projectabc-backend:${BUILD_NUMBER}
