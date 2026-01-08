@@ -1,24 +1,27 @@
-name: Build Frontend and Backend
+name: CI - Build & SonarQube
 
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
-  build:
+  build-sonar:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout source code
       uses: actions/checkout@v4
 
-    # ---------------- FRONTEND ----------------
-    - name: Setup Node.js for Frontend
+    # ---------------- NODE SETUP ----------------
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 18
 
+    # ---------------- FRONTEND ----------------
     - name: Install Frontend Dependencies
       working-directory: frontend
       run: npm install
@@ -27,17 +30,22 @@ jobs:
       working-directory: frontend
       run: npm run build
 
-    # ---------------- BACKEND ----------------
-    - name: Setup Node.js for Backend
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18
+    - name: Check Frontend Build Artifacts
+      working-directory: frontend
+      run: |
+        echo "Listing frontend directory:"
+        ls -ltr
+        echo "Listing dist folder (if exists):"
+        ls -ltr dist || echo "dist folder not found"
+        echo "Listing build folder (if exists):"
+        ls -ltr build || echo "build folder not found"
 
+    # ---------------- BACKEND ----------------
     - name: Install Backend Dependencies
       working-directory: backend
       run: npm install
 
-    - name: Build Backend
+    - name: Build Backend (if build script exists)
       working-directory: backend
       run: |
         if npm run | grep -q "build"; then
@@ -45,3 +53,20 @@ jobs:
         else
           echo "No backend build step found, skipping"
         fi
+
+    - name: Check Backend Build Artifacts
+      working-directory: backend
+      run: |
+        echo "Listing backend directory:"
+        ls -ltr
+        echo "Listing dist folder (if exists):"
+        ls -ltr dist || echo "dist folder not found"
+        echo "Listing build folder (if exists):"
+        ls -ltr build || echo "build folder not found"
+
+    # ---------------- SONARQUBE ----------------
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v2
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
