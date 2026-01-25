@@ -51,12 +51,18 @@ jobs:
         fi
 
     # ---------------- SONARQUBE ----------------
-    #- name: SonarQube Scan
-    #  uses: SonarSource/sonarqube-scan-action@v2
-    #  env:
-     #   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-     #   SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
+    - name: SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v2
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    - name: check report
+      run : |
+        echo "hi report"
+        sleep 2
+        cat .scannerwork/report-task.txt
+        sleep 2
+        echo "hello report"
     # ---------------- DOCKER SETUP ----------------
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
