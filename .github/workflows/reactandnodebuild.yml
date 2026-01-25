@@ -64,7 +64,7 @@ jobs:
         sleep 2
         echo "hello report"
 
-   # ---------------- QUALITY GATE ----------------
+    # ---------------- QUALITY GATE ----------------
     - name: SonarQube Quality Gate
       uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
       timeout-minutes: 5
