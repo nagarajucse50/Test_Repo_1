@@ -1,1 +1,16 @@
-name: test
+name: Testa 
+  on:
+    push:
+      branches: [ "Main" ]
+    pull_reqest:
+      branches: [ "Main" ]
+    workflow_dispatch:
+
+    jobs:
+     build-sonar:
+      runs-on: ubntu-latest
+
+      env:
+        BULID_NUMBER: ${{ githb.run_nmber }}
+        ARTIFACTORY_URL: ${{ vars.NEW_ARTIFACTORY_URL }}
+        ARTIFACTORY_REPO: $ {{ vars.ARTIFACTORY_REPO }}
