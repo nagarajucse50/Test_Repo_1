@@ -1,0 +1,23 @@
+name: Testa
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-sonar:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      ARTIFACTORY_URL: ${{ vars.NEW_ARTIFACTORY_URL }}
+      ARTIFACTORY_REPO: ${{ vars.ARTIFACTORY_REPO }}
+
+    steps:
+    # ---------------- CHECKOUT ----------------
+    - name: Testa
+      uses: actions/checkout@v4
+      
