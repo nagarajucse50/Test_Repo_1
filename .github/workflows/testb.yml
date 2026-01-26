@@ -23,7 +23,7 @@ jobs:
       uses: actions/checkout@v4
       
     # ---------------- NODE SETUP ----------------
-    - name: Testb
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 18
