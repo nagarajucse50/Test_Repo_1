@@ -1,1 +1,33 @@
+name: Sample Frontend and Backend Build
 
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-sonar:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      ARTIFACTORY_URL: ${{ vars.NEW_ARTIFACTORY_URL }}
+      ARTIFACTORY_REPO: ${{ vars.ARTIFACTORY_REPO }}
+
+    steps:
+    # ---------------- CHECKOUT ----------------
+    - name: Checkout source code
+      uses: actions/checkout@v4
+
+    # ---------------- NODE SETUP ----------------
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    # ---------------- FRONTEND ----------------
+    - name: Install Frontend Dependencies
+      working-directory: frontend
+      run: npm install
