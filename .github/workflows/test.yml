@@ -1,4 +1,4 @@
-name: Testa 
+name: Test
   on:
     push:
       branches: [ "Main" ]
