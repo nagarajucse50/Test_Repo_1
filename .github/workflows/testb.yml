@@ -15,9 +15,15 @@ jobs:
       BUILD_NUMBER: ${{ github.run_number }}
       ARTIFACTORY_URL: ${{ vars.NEW_ARTIFACTORY_URL }}
       ARTIFACTORY_REPO: ${{ vars.ARTIFACTORY_REPO }}
+      
 
     steps:
     # ---------------- CHECKOUT ----------------
     - name: Testa
       uses: actions/checkout@v4
       
+    # ---------------- NODE SETUP ----------------
+    - name: Testb
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
