@@ -1,5 +1,4 @@
-name: Sample Frontend and Backend Build
-
+name: Testc
 on:
   push:
     branches: [ "main" ]
@@ -18,16 +17,16 @@ jobs:
 
     steps:
     # ---------------- CHECKOUT ----------------
-    - name: Checkout source code
+    - name: Testa
       uses: actions/checkout@v4
 
     # ---------------- NODE SETUP ----------------
-    - name: Setup Node.js
+    - name: Testb
       uses: actions/setup-node@v4
       with:
         node-version: 18
 
     # ---------------- FRONTEND ----------------
-    - name: Install Frontend Dependencies
+    - name: Testc
       working-directory: frontend
       run: npm install
