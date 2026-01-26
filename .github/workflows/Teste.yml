@@ -1,0 +1,40 @@
+name: Teste
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-sonar:
+    runs-on: ubuntu-latest
+
+    env:
+      BUILD_NUMBER: ${{ github.run_number }}
+      ARTIFACTORY_URL: ${{ vars.NEW_ARTIFACTORY_URL }}
+      ARTIFACTORY_REPO: ${{ vars.ARTIFACTORY_REPO }}
+
+    steps:
+    # ---------------- CHECKOUT ----------------
+    - name: Testa
+      uses: actions/checkout@v4
+
+    # ---------------- NODE SETUP ----------------
+    - name: Testb
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    # ---------------- FRONTEND ----------------
+    - name: Testc
+      working-directory: frontend
+      run: npm install
+
+    - name: Testd
+      working-directory: frontend
+      run: npm run build
+    # ---------------- BACKEND ----------------
+    - name: Teste
+      working-directory: backend
+      run: npm install
