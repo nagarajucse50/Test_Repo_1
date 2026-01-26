@@ -1,7 +1,7 @@
 name: Test
   on:
     push:
-      branches: [ "Main" ]
+      branches: [ "Master" ]
     pull_reqest:
       branches: [ "Main" ]
     workflow_dispatch:
