@@ -1,0 +1,2 @@
+- name: testa
+  uses: actions/checkout@v4
