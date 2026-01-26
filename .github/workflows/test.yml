@@ -1,9 +1,9 @@
 name: Testa 
-  on:
-    push:
-      branches: [ "Main" ]
-    pull_reqest:
-      branches: [ "Main" ]
+  #on:
+    #push:
+      #branches: [ "Main" ]
+    #pull_reqest:
+      #branches: [ "Main" ]
     workflow_dispatch:
 
     jobs:
